@@ -4,6 +4,7 @@
 # of the MIT license.  See the LICENSE file for details.
 
 from abc import ABC, abstractmethod
+from contextlib import suppress
 from typing import Iterator, Union
 import json
 import logging
@@ -134,7 +135,8 @@ class UdpTransport:
         if not self._keep_connection or force:
             if self._sock:
                 self._wait_for_socket_buffer_empty()
-                self._sock.shutdown(socket.SHUT_WR)
+                with suppress(OSError):
+                    self._sock.shutdown(socket.SHUT_WR)
                 self._sock.close()
                 self._sock = None
 
